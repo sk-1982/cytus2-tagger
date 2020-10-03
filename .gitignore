@@ -1,0 +1,12 @@
+__pycache__/
+.idea/
+data/
+globalgamemanagers/
+music/
+mp3/
+flac/
+
+song_pack_data.json
+expansion_pack_data.json
+*.wav
+

@@ -1,0 +1,309 @@
+output_dir: music
+input_dir: globalgamemanagers
+# for alac, use format: m4a and codec: alac
+format: mp3  # file extension to use
+codec: null  # override for audio codec. Will be inferred from file extension if null
+bitrate: null  # ffmpeg bitrate to use. Will use default if null
+
+# either character or track
+# character: use the same album art for all a character's songs
+# track: use the album art from the track preview image
+album_art_style: character
+# folder to use for character art, must be set if album_art_style is character
+character_art_folder: character_art
+
+# if true, rename the artist field whenever it is "Æsir"
+rename_aesir: false
+# what to rename to
+rename_aesir_to: "Ice and KIVΛ"
+
+# format for use with generic music
+music_format:
+  enabled: true # whether or not to generate these files
+  output_dir: "{character.id}"
+  filename: "{song.number} {song.artist} - {song.name}"
+  title: "{song.name}"
+  subtitle: null
+  comments: null
+  artist: "{song.artist}"
+  album_artist: "Rayark"
+  album: "Cytus II {character.name} Original Soundtrack"
+  year: null
+  number: "{song.number}"
+  genre: "Game"
+  disc_number: null
+  composer: null
+  producer: null
+
+# format for use with music that has a different file for a difficulty
+# e.g. conflict glitch
+music_format_separate_difficulty:
+  enabled: true # whether or not to generate these files
+  title: "{song.name} ({difficulty.name})"
+  output_dir: "{character.id}"
+  filename: "{song.number} {song.artist} - {song.name} ({difficulty.name})"
+  subtitle: null
+  comments: null
+  artist: "{song.artist}"
+  album_artist: "Rayark"
+  album: "Cytus II {character.name} Original Soundtrack"
+  year: null
+  number: "{song.number}"
+  genre: "Game"
+  disc_number: null
+  composer: null
+  producer: null
+
+music_format_character_theme:
+  enabled: true
+  loops: 2
+  title: "{character.name}'s Theme"
+  filename: "0 {character.name}'s Theme"
+  output_dir: "{character.id}"
+  subtitle: null
+  comments: null
+  artist: "Rayark"
+  album_artist: "Rayark"
+  album: "Cytus II {character.name} Original Soundtrack"
+  year: null
+  number: "0"
+  genre: "Game"
+  disc_number: null
+  composer: null
+  producer: null
+
+# special music files to process
+special_files:
+  - input_filename: "story_im02"
+    enabled: true
+    title: "V. (Bit-crushed)"
+    filename: "14 Æsir - V. (Bit-crushed)"
+    output_dir: "ivy001"
+    subtitle: null
+    comments: null
+    artist: "Æsir"
+    album_artist: "Rayark"
+    album: "Cytus II Ivy Original Soundtrack"
+    year: null
+    number: "14"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    # album_art_name: "ivy001_014.png"
+    album_art: "{character_album_art['ivy001']}"
+  - input_filename: "story_004"
+    enabled: true
+    title: "CHAOS (Bit-crushed)"
+    filename: "11 Æsir - CHAOS (Bit-crushed)"
+    output_dir: "robo001"
+    subtitle: null
+    comments: null
+    artist: "Æsir"
+    album_artist: "Rayark"
+    album: "Cytus II ROBO_Head Original Soundtrack"
+    year: null
+    number: "11"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    # album_art_name: "robo001_011.png"
+    album_art: "{character_album_art['robo001']}"
+  - input_filename: "title01"
+    enabled: true
+    title: "Title Theme (Prologue)"
+    filename: "2 Title Theme (Prologue)"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "2"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+    loops: 2
+    folder_name: "titlebgms"
+  - input_filename: "title04"
+    enabled: true
+    title: "Still (Piano Cover)"
+    filename: "7 Rua feat. K - Still (Piano Cover)"
+    output_dir: "cherry001"
+    subtitle: null
+    comments: null
+    artist: "Rua feat. K"
+    album_artist: "Rayark"
+    album: "Cytus II Cherry Original Soundtrack"
+    year: null
+    number: "7"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['cherry001']}"
+  - input_filename: "title02"
+    enabled: true
+    title: "Title Theme"
+    filename: "1 Title Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "1"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+    loops: 2
+    intro: "title02_intro"
+    folder_name: "titlebgms"
+  - input_filename: "title01"
+    enabled: true
+    title: "Song Select (Prologue)"
+    filename: "3 Song Select (Prologue)"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "3"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+    loops: 1
+    folder_name: "!titlebgms"
+  - input_filename: "result_loop"
+    enabled: true
+    title: "Results Theme"
+    filename: "4 Results Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "4"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+    loops: 1
+    intro: "result_intro"
+  - input_filename: "vanessa001_runaway"
+    enabled: true
+    title: "Vanessa's Theme (Frantic)"
+    filename: "0 Vanessa's Theme (Frantic)"
+    output_dir: "vanessa001"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Vanessa Original Soundtrack"
+    year: null
+    number: "0"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['vanessa001']}"
+    loops: 2
+  - input_filename: "im"
+    enabled: true
+    title: "iM Theme"
+    filename: "5 iM Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "5"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+  - input_filename: "im_broken"
+    enabled: true
+    title: "iM Theme (Broken)"
+    filename: "6 iM Theme (Broken)"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "6"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+  - input_filename: "os"
+    enabled: true
+    title: "OS Theme"
+    filename: "7 OS Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "7"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+  - input_filename: "gallery"
+    enabled: true
+    title: "Gallery Theme"
+    filename: "8 Gallery Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "8"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
+  - input_filename: "shop_entrance"
+    enabled: true
+    title: "Black Market Theme"
+    filename: "9 Black Market Theme"
+    output_dir: "main"
+    subtitle: null
+    comments: null
+    artist: "Rayark"
+    album_artist: "Rayark"
+    album: "Cytus II Original Soundtrack"
+    year: null
+    number: "9"
+    genre: "Game"
+    disc_number: null
+    composer: null
+    producer: null
+    album_art: "{character_album_art['main']}"
