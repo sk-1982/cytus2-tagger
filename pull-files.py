@@ -67,17 +67,7 @@ def unzip(zip_filepath, dest):
                     raise exception
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Pull and extract Cytus 2 apk and obb files from an android device')
-    parser.add_argument('-s', '--serial', dest='device_serial', type=str, default=argparse.SUPPRESS,
-                        help='Device serial to use if more than one device connected')
-    parser.add_argument('-o', '--output-dir', dest='output_dir', type=str, default='data',
-                        help='Directory to output extracted files to (default: data)')
-    parser.add_argument('--skip-cleanup', dest='skip_cleanup', action='store_true',
-                        help='Don\'t remove obb and apk files after running')
-
-    args = parser.parse_args()
-
+def pull_files(tmp):
     try:
         check_output(['adb', '--version'])
     except FileNotFoundError:
@@ -128,9 +118,7 @@ if __name__ == '__main__':
     else:
         print('Unable to locate asset bundles. Black market song packs will not be pulled.')
 
-    tmp = 'tmp' + ''.join(random.choices(string.digits + string.ascii_letters, k=16))
-
-    os.mkdir(f'./{tmp}')
+    os.makedirs(f'./{tmp}', exist_ok=True)
 
     print('Pulling apk...')
     adb('pull', apk, f'./{tmp}/base.apk', print=True)
@@ -141,19 +129,63 @@ if __name__ == '__main__':
     print('Pulling obb...')
     adb('pull', obb, f'./{tmp}/{obb_filename}', print=True)
 
-    unzip(f'./{tmp}/base.apk', args.output_dir)
-    unzip(f'./{tmp}/{obb_filename}', args.output_dir)
+    return obb_filename, asset_bundles
+
+
+def extract_files(input_dir, obb_filename, asset_bundles):
+    unzip(f'./{input_dir}/base.apk', args.output_dir)
+    unzip(f'./{input_dir}/{obb_filename}', args.output_dir)
 
     if asset_bundles:
-        bundles = glob.glob(f'./{tmp}/AssetBundles/*.ab/*.ab')
+        bundles = glob.glob(f'./{input_dir}/AssetBundles/*.ab/*.ab')
         for index, bundle in enumerate(bundles):
             actual_filename = os.path.basename(os.path.dirname(bundle))
             output = f'{args.output_dir}/assets/AssetBundles/{actual_filename}'
             print('Copying', bundle, 'to', output, f'({index + 1}/{len(bundles)})')
             shutil.copyfile(bundle, output)
 
-    if not args.skip_cleanup:
+    if not args.skip_cleanup and not args.extract_only:
         print('Cleaning up...')
-        shutil.rmtree(f'./{tmp}')
+        shutil.rmtree(f'./{input_dir}')
 
     print(f'Extracted files to {args.output_dir}. Use uTinyRipper to extract assets')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Pull and extract Cytus 2 apk and obb files from an android device')
+    parser.add_argument('-s', '--serial', dest='device_serial', type=str, default=argparse.SUPPRESS,
+                        help='Device serial to use if more than one device connected')
+    parser.add_argument('-o', '--output-dir', dest='output_dir', type=str, default='data',
+                        help='Directory to output extracted files to (default: data)')
+    parser.add_argument('--skip-cleanup', dest='skip_cleanup', action='store_true',
+                        help='Don\'t remove obb and apk files after running')
+    parser.add_argument('--pull-only', dest='pull_only', action='store_true',
+                        help='Skip extraction; pull apk, obb, and asset bundles from device only')
+    parser.add_argument('--extract-only', dest='extract_only', action='store_true',
+                        help='Skip pulling; extract data from assets only (requires --input-dir)')
+    parser.add_argument('-i', '--input-dir', dest='input_dir', type=str, default=None,
+                        help='Input directory if using --extract-only')
+
+    args = parser.parse_args()
+
+    if args.extract_only:
+        if args.input_dir is None:
+            print('Error: --extract-only used without --input-dir')
+            sys.exit(1)
+
+        try:
+            next(glob.iglob(f'{args.input_dir}/base.apk'))
+            extract_files(args.input_dir, os.path.basename(next(glob.iglob(f'{args.input_dir}/*.obb'))), True)
+            sys.exit(0)
+        except StopIteration:
+            print("Error: obb or apk not found in input directory")
+            sys.exit(1)
+
+    tmp = args.output_dir if args.pull_only else 'tmp' + ''.join(random.choices(string.digits + string.ascii_letters, k=16))
+
+    data = pull_files(tmp)
+
+    if args.pull_only:
+        sys.exit(0)
+
+    extract_files(tmp, *data)
