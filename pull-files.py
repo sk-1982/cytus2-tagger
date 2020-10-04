@@ -1,20 +1,15 @@
 import argparse
-import concurrent.futures
 import glob
 import os
 import random
-import re
 import shutil
 import string
 import sys
-import zipfile
 from subprocess import check_output, Popen, PIPE
+from utils import split_newline
+from unzip import unzip
 
 args = None
-
-
-def split_newline(string):
-    return re.compile('\\r?\\n').split(string)
 
 
 def adb(*a, split=True, print=False):
@@ -31,40 +26,6 @@ def adb(*a, split=True, print=False):
     process = Popen([*command_line, *a], stdout=PIPE, stderr=PIPE)
     for c in iter(lambda: process.stdout.read(1), b''):
         sys.stdout.buffer.write(c)
-
-
-def unzip_member(zip_filepath, filename, dest, file_index, total_files):
-    print('Extracting', filename, 'from', zip_filepath, 'to', dest, f'({file_index + 1}/{total_files})')
-    with open(zip_filepath, 'rb') as f:
-        try:
-            zf = zipfile.ZipFile(f)
-            zf.extract(filename, dest)
-        except FileExistsError:
-            print('Skipped extracting', filename, '(already exists)')
-
-
-def unzip(zip_filepath, dest):
-    print('Extracting', zip_filepath, 'to', dest)
-    with open(zip_filepath, 'rb') as f:
-        zf = zipfile.ZipFile(f)
-        futures = []
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            infolist = zf.infolist()
-            for index, member in enumerate(infolist):
-                futures.append(
-                    executor.submit(
-                        unzip_member,
-                        zip_filepath,
-                        member.filename,
-                        dest,
-                        index,
-                        len(infolist)
-                    )
-                )
-            for future in concurrent.futures.as_completed(futures):
-                exception = future.exception()
-                if exception:
-                    raise exception
 
 
 def pull_files(tmp):

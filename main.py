@@ -11,38 +11,16 @@ import json
 import re
 import concurrent.futures
 import signal
-import psutil
 from time import time
-from subprocess import check_output, CalledProcessError, Popen, PIPE
+from subprocess import check_output, CalledProcessError, Popen
+from utils import kill_child_processes, find, special_file_filterer
+from encode import encode_song, ffmpeg
 
 from models.Character import Character
 from models.ExpansionPackInfo import ExpansionPackInfo
 from models.Song import Song
 
-remove_punctuation_map = dict((ord(char), '_') for char in '\/*?:"<>|')
-
-
-def kill_child_processes(parent_pid, sig=signal.SIGTERM):
-    try:
-        parent = psutil.Process(parent_pid)
-    except psutil.NoSuchProcess:
-        return
-    children = parent.children(recursive=True)
-    for process in children:
-        process.send_signal(sig)
-
-    parent.send_signal(sig)
-
-
-def ffmpeg(*args, print=False):
-    command_line = ['ffmpeg', '-loglevel', 'panic', '-y', *args]
-
-    if not print:
-        return check_output(command_line)
-
-    process = Popen(command_line, stdout=PIPE, stderr=PIPE)
-    for c in iter(lambda: process.stdout.read(1), b''):
-        sys.stdout.buffer.write(c)
+remove_punctuation_map = dict((ord(char), '_') for char in r'\/*?:"<>|')
 
 
 def parse_format(format: dict, local_dict: dict):
@@ -54,77 +32,6 @@ def parse_format(format: dict, local_dict: dict):
         if type(value) == str else value
         for key, value in format.items()
     }
-
-
-def find(iterable, predicate):
-    for item in iterable:
-        if predicate(item):
-            return item
-
-
-def encode_song(input_file, output_file, tagger_name, format, extra_args_before=None, extra_args_after=None):
-    if extra_args_after is None:
-        extra_args_after = []
-    if extra_args_before is None:
-        extra_args_before = []
-
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-    if os.path.exists(output_file) and os.path.isfile(output_file):
-        print('File', output_file, 'already exists, skipping')
-        return output_file
-
-    tagger = taggers.tagger_by_name(tagger_name)
-
-    ffmpeg(*extra_args_before, '-i', input_file, *extra_args_after, output_file, print=True)
-
-    if not tagger:
-        return output_file
-
-    file_tagger = tagger(mutagen.File(output_file))
-
-    if 'title' in format and format['title']:
-        file_tagger.title(format['title'])
-
-    if 'subtitle' in format and format['subtitle']:
-        file_tagger.subtitle(format['subtitle'])
-
-    if 'comments' in format and format['comments']:
-        file_tagger.comments(format['comments'])
-
-    if 'artist' in format and format['artist']:
-        file_tagger.artist(format['artist'])
-
-    if 'album_artist' in format and format['album_artist']:
-        file_tagger.album_artist(format['album_artist'])
-
-    if 'album' in format and format['album']:
-        file_tagger.album(format['album'])
-
-    if 'year' in format and format['year']:
-        file_tagger.year(format['year'])
-
-    if 'number' in format and format['number']:
-        file_tagger.track_number(format['number'])
-
-    if 'genre' in format and format['genre']:
-        file_tagger.genre(format['genre'])
-
-    if 'disc_number' in format and format['disc_number']:
-        file_tagger.disc_number(format['disc_number'])
-
-    if 'composer' in format and format['composer']:
-        file_tagger.composer(format['composer'])
-
-    if 'producer' in format and format['producer']:
-        file_tagger.producer(format['producer'])
-
-    if 'album_art' in format and format['album_art']:
-        file_tagger.album_art(format['album_art'])
-
-    file_tagger.save()
-
-    return output_file
 
 
 if __name__ == '__main__':
@@ -184,21 +91,6 @@ if __name__ == '__main__':
         special_files.append((special_file['input_filename'], folder_name))
         if 'intro' in special_file:
             special_files.append((special_file['intro'], folder_name))
-
-    def special_file_filterer(special_file, file_base_name, base_dir_name):
-        special_file_filename, special_file_dir_name = special_file
-        invert = special_file_dir_name and special_file_dir_name[0] == '!'
-
-        if file_base_name != special_file_filename:
-            return False
-
-        if special_file_dir_name and invert and base_dir_name == special_file_dir_name[1:]:
-            return False
-
-        if special_file_dir_name and not invert and base_dir_name != special_file_dir_name:
-            return False
-
-        return True
 
 
     music_wavs = {}
