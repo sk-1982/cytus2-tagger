@@ -5,6 +5,9 @@ format: mp3  # file extension to use
 codec: null  # override for audio codec. Will be inferred from file extension if null
 bitrate: null  # ffmpeg bitrate to use. Will use default if null
 
+ffmpeg_path: 'ffmpeg' # path to ffmpeg executable. Leave as-is if ffmpeg is on the environment PATH
+adb_path: 'adb' # path to adb executable. Leave as-is if adb is on the environment PATH
+
 # either character or track
 # character: use the same album art for all a character's songs
 # track: use the album art from the track preview image

@@ -6,15 +6,20 @@ import shutil
 import string
 import sys
 from subprocess import check_output, Popen, PIPE
+
+import yaml
+
 from utils import split_newline
 from unzip import unzip
 
 args = None
 
+ADB_PATH = 'adb'
+
 
 def adb(*a, split=True, print=False):
     global args
-    command_line = ['adb']
+    command_line = [ADB_PATH]
     if 'device_serial' in args:
         command_line += ['-s', args.device_serial]
 
@@ -30,9 +35,9 @@ def adb(*a, split=True, print=False):
 
 def pull_files(tmp):
     try:
-        check_output(['adb', '--version'])
+        check_output([ADB_PATH, '--version'])
     except FileNotFoundError:
-        print('Error: adb binary not found')
+        print('Error: adb binary not found. Please add it to the path or modify the file location in config.yml')
         sys.exit(1)
 
     devices_output = check_output(['adb', 'devices']).decode()
@@ -113,6 +118,9 @@ def extract_files(input_dir, obb_filename, asset_bundles):
 
 
 if __name__ == '__main__':
+    with open('./config.yml', 'r', encoding='utf8') as f:
+        ADB_PATH = yaml.load(f, yaml.Loader)['adb_path']
+
     parser = argparse.ArgumentParser(description='Pull and extract Cytus 2 apk and obb files from an android device')
     parser.add_argument('-s', '--serial', dest='device_serial', type=str, default=argparse.SUPPRESS,
                         help='Device serial to use if more than one device connected')
