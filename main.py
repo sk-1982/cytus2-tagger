@@ -15,12 +15,11 @@ from time import time
 from subprocess import check_output, CalledProcessError, Popen
 from utils import kill_child_processes, find, special_file_filterer
 from encode import encode_song, ffmpeg
+import encode
 
 from models.Character import Character
 from models.ExpansionPackInfo import ExpansionPackInfo
 from models.Song import Song
-
-remove_punctuation_map = dict((ord(char), '_') for char in r'\/*?:"<>|')
 
 
 def parse_format(format: dict, local_dict: dict):
@@ -34,15 +33,20 @@ def parse_format(format: dict, local_dict: dict):
     }
 
 
+remove_punctuation_map = dict((ord(char), '_') for char in r'\/*?:"<>|')
+
+with open('./config.yml', 'r', encoding='utf8') as f:
+    config = yaml.load(f, yaml.Loader)
+
+encode.FFMPEG_PATH = config['ffmpeg_path']
+
+
 if __name__ == '__main__':
     try:
-        check_output(['ffmpeg', '-hide_banner', '-h'])
+        check_output([config['ffmpeg_path'], '-hide_banner', '-h'])
     except FileNotFoundError:
-        print('Error: ffmpeg binary not found')
+        print('Error: ffmpeg binary not found. Please add it to the path or modify the file location in config.yml')
         sys.exit(1)
-
-    with open('./config.yml', 'r', encoding='utf8') as f:
-        config = yaml.load(f, yaml.Loader)
 
     parser = argparse.ArgumentParser(description='Convert Cytus 2 files to music album')
     parser.add_argument('-i', '--input-dir', dest='input_dir', type=str, default=config['input_dir'],

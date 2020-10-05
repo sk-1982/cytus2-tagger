@@ -5,8 +5,11 @@ import taggers
 from subprocess import check_output, Popen, PIPE
 
 
+FFMPEG_PATH = 'ffmpeg'
+
+
 def ffmpeg(*args, print=False):
-    command_line = ['ffmpeg', '-loglevel', 'panic', '-y', *args]
+    command_line = [FFMPEG_PATH, '-loglevel', 'panic', '-y', *args]
 
     if not print:
         return check_output(command_line)
