@@ -2,9 +2,10 @@
 This repository contains various tools for pulling, extracting, and tagging music game files from Cytus II.
 
 Prerequisites:
+* [A copy of this repository](https://github.com/sk-1982/cytus2-tagger/archive/main.zip)
 * [Latest version of Python](https://www.python.org/downloads/)
 * Android device with Cytus II installed
-    * DLC music will not be processed if they are not downloaded on the device
+    * DLC music will not be processed if they are not downloaded on the device (see [DLC music table](#dlc-music-table-345))
 * [ADB installed on path and USB debugging enabled](https://www.xda-developers.com/install-adb-windows-macos-linux/)
 * [FFmpeg installed on path](https://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
 * [uTinyRipper for extracting Unity assets](https://sourceforge.net/projects/utinyripper/files/)
@@ -41,3 +42,45 @@ Note: tapping "download all" on the download screen in-game will download all th
 | ROBO_Head | Sickest City<br /> Jazzy Glitch Machine<br /> dimensionalize nervous breakdown (rev.flat)<br /> cold<br /> NRG_Tech<br /> Break Through The Barrier<br /> Dead Master                                                                                                            |
 | Paff      | So In Love                                                                                                                                                                                                                                                                       |
 | Ivy       | Cristalisia<br /> Occidens<br /> Red Five<br /> Homebound Train & Moving Thoughts<br /> iL<br /> CODE NAME : SIGMA<br /> New Challenger Approaching<br /> What's Your PR.Ice?<br /> VIS::CRACKED<br /> Wicked Ceremony                                                           |
+
+## Advanced Usage
+
+#### `pull-files.py`
+
+| Argument           | Description                                                                                 |
+|--------------------|---------------------------------------------------------------------------------------------|
+| `-h, --help`       | Show help message                                                                           |
+| `-s, --serial`     | ADB device serial if more than once device is connected (use `adb devices` to show devices) |
+| `-o, --output-dir` | Directory to output extracted files to (default: `data`)                                      |
+| `--skip-cleanup`   | Don't remove obb and apk files after running                                                |
+| `--pull-only`      | Pull apk, obb, and asset bundles from device only; skip extraction                          |
+| `--extract-only`   | Extract data from apk, obb, and asset bundles only; skip pulling (requires `--input-dir`)   |
+| `-i, --input-dir`  | Input directory with apk, obb, and asset bundles if using `--extract-only`                  |
+
+Examples:
+* `python pull-files.py -s ABCDEFG -o output`
+    * Extract files from device with serial `ABCDEFG` into directory `output`
+* `python pull-files.py --pull-only -o pulled`
+    * Pull files from device into directory `pulled` (skip extraction)
+* `python pull-files.py --extract-only -i pulled -o extracted`
+    * Extract files from the directory `pulled` into directory `extracted`
+
+#### `main.py`
+
+| Argument              | Description                                                                                          |
+|-----------------------|------------------------------------------------------------------------------------------------------|
+| `-h, --help`          | Show help message                                                                                    |
+| `-i, --input-dir`     | Input directory to use (default: `globalgamemanagers`)                                               |
+| `-o, --output-dir`    | Output directory to use (default: `music`)                                                           |
+| `-f, --format`        | File extension to use, such as `mp3`, `flac`, `m4a`, etc. (default: `mp3`)                           |
+| `-c, -c:a, --codec`   | Codec for files, such as `alac`, `mp3`, `opus`, etc. Will be inferred from file extension if not set |
+| `-b, -b:a, --bitrate` | Override bitrate for files, such as `320k`                                                           |
+| `config`              | Config file to use (default: `config.yml`)                                                           |
+
+Examples:
+* `python main.py -o music-mp3 -f mp3 -b:a 320k`
+    * Encode music into the `music-mp3` folder with `mp3` file extension and `320kbps` bitrate
+* `python main.py -o music-flac -f flac config-track.yml`
+    * Encode music into the `music-flac` folder with `flac` file extension, using the `config-track.yml` config file
+* `python main.py -o music-alac -f m4a -c:a alac`
+    * Encode music into the `music-alac` folder with `m4a` file extension with `alac` codec.
