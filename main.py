@@ -35,7 +35,7 @@ def parse_format(format: dict, local_dict: dict):
 
 remove_punctuation_map = dict((ord(char), '_') for char in r'\/*?:"<>|')
 
-with open('./config.yml', 'r', encoding='utf8') as f:
+with open(find(sys.argv, lambda s: s.endswith('.yml')) or './config.yml', 'r', encoding='utf8') as f:
     config = yaml.load(f, yaml.Loader)
 
 encode.FFMPEG_PATH = config['ffmpeg_path']
@@ -60,6 +60,7 @@ if __name__ == '__main__':
                              'Note: for alac, use -f m4a -c alac')
     parser.add_argument('-b', '-b:a', '--bitrate', dest='bitrate', type=str, default=config['bitrate'],
                         help=f'Bitrate for ffmpeg, will use ffmpeg default if None (default: {config["bitrate"]})')
+    parser.add_argument('config', nargs='?', default='config.yml', help='Config file to use (default: config.yml)')
 
     args = parser.parse_args()
 
