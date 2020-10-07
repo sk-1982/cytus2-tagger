@@ -12,6 +12,7 @@ Prerequisites:
 
 ## Usage
 1. Follow the above prerequisites instructions
+1. Open a command prompt in the repository folder
 1. Run `pip3 install -r requirements.txt`
 
 Pulling files from device:
@@ -30,6 +31,7 @@ Tagging and encoding files:
 1. Open `config.yml` and change what you want (sensible defaults have been set for you)
 1. Run `python main.py -f {format}` where `{format}` is the file extension you want (ex: `python main.py -f mp3`)
     * Note: for ALAC, run `python main.py -f m4a -c alac`
+    * A different config file for track-based tagging has been provided with `config-track.yml`. Run `python main.py -f {format} config-track.yml` to use it.
 
 ## DLC music table (3.4.5)
 
