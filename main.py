@@ -13,24 +13,13 @@ import concurrent.futures
 import signal
 from time import time
 from subprocess import check_output, CalledProcessError, Popen
-from utils import kill_child_processes, find, special_file_filterer
+from utils import kill_child_processes, find, special_file_filterer, parse_format
 from encode import encode_song, ffmpeg
 import encode
 
 from models.Character import Character
 from models.ExpansionPackInfo import ExpansionPackInfo
 from models.Song import Song
-
-
-def parse_format(format: dict, local_dict: dict):
-    for key in local_dict.keys():
-        exec(f'{key} = local_dict["{key}"]')
-
-    return {
-        key: re.sub(r'{(.+?)}', lambda m: str(eval(m.group(1))), value)
-        if type(value) == str else value
-        for key, value in format.items()
-    }
 
 
 remove_punctuation_map = dict((ord(char), '_') for char in r'\/*?:"<>|')
