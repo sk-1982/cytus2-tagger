@@ -64,3 +64,11 @@ def find(iterable, predicate):
     for item in iterable:
         if predicate(item):
             return item
+
+
+def parse_format(format: dict, local_dict: dict):
+    return {
+        key: re.sub(r'{(.+?)}', lambda m: str(eval(m.group(1), globals(), local_dict)), value)
+        if type(value) == str else value
+        for key, value in format.items()
+    }
