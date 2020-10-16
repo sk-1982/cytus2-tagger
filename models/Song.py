@@ -16,6 +16,9 @@ class Song:
         if character_id:
             self.character_id = character_id
 
+        self.name = self.name.strip()
+        self.artist = self.artist.strip()
+
         self.number = int(self.id[self.id.index('_') + 1:])
         if self.character_id == 'paff001':
             self.number += 1  # paff's songs are 0-indexed instead of 1-indexed
