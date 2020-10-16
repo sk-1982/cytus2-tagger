@@ -5,8 +5,11 @@ globalgamemanagers/
 music/
 mp3/
 flac/
+node_modules/
 
 song_pack_data.json
 expansion_pack_data.json
+expansion_pack_data.js
+package-lock.json
 *.wav
 
