@@ -132,23 +132,6 @@ special_files:
     album_art: "{character_album_art['main']}"
     loops: 2
     folder_name: "titlebgms"
-  - input_filename: "title04"
-    enabled: true
-    title: "Still (Piano Cover)"
-    filename: "7 Rua feat. K - Still (Piano Cover)"
-    output_dir: "cherry001"
-    subtitle: null
-    comments: null
-    artist: "Rua feat. K"
-    album_artist: "Rayark"
-    album: "Cytus II Cherry Original Soundtrack"
-    year: null
-    number: "7"
-    genre: "Game"
-    disc_number: null
-    composer: null
-    producer: null
-    album_art: "{character_album_art['cherry001']}"
   - input_filename: "title02"
     enabled: true
     title: "Title Theme"
