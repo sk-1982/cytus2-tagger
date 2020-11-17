@@ -33,7 +33,7 @@ Tagging and encoding files:
     * Note: for ALAC, run `python main.py -f m4a -c alac`
     * A different config file for track-based tagging has been provided with `config-track.yml`. Run `python main.py -f {format} config-track.yml` to use it.
 
-## <a name="dlc-music-table"></a>DLC music table (3.5)
+## <a name="dlc-music-table"></a>DLC music table (3.5.5)
 
 The following songs need to be downloaded if you want them to be processed.  
 Note: tapping "download all" on the download screen in-game will download all the character's songs you own.
