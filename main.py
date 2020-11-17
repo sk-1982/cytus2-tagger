@@ -163,6 +163,7 @@ if __name__ == '__main__':
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = []
+        skipped = []
         completed_futures = 0
 
 
@@ -219,6 +220,7 @@ if __name__ == '__main__':
                     if song.id + '.wav' in music_wavs:
                         submit_task(format, locals(), music_wavs[song.id + '.wav'], album_art)
                     else:
+                        skipped.append(f'{song.name} ({song.id} not found)')
                         print('skipping', song.id, song.name, f'({song.id}.wav not found)')
 
                 for difficulty in song.separate_difficulties:
@@ -228,6 +230,7 @@ if __name__ == '__main__':
                         if difficulty.music_id + '.wav' in music_wavs:
                             submit_task(format, locals(), music_wavs[difficulty.music_id + '.wav'], album_art)
                         else:
+                            skipped.append(f'{song.name} - {difficulty.name} ({difficulty.music_id} not found)')
                             print('skipping', difficulty.music_id, song.name, f'({difficulty.music_id}.wav not found)')
 
         for format in config['special_files']:
@@ -278,3 +281,10 @@ if __name__ == '__main__':
                 print('processed', file_name, f'({completed_futures}/{len(futures)}). ETA: {round(eta_min)} m {round(eta_sec)} s')
             except KeyboardInterrupt:
                 stop()
+
+        print('processed', len(futures), 'songs')
+
+        if len(skipped):
+            print(len(skipped), 'songs were skipped:')
+            for skip in skipped:
+                print(skip)
